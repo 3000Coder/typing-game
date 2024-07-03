@@ -2,30 +2,36 @@
 
 <head>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body x-data="{ message: wordList.random(), input: '', score: 0, started: false, start: undefined, times: []}" @keydown="
+<body class="bg-gray-900 text-white"
+    x-data="{ word: 'Click to play!', input: '', score: 0, started: false, start: undefined, times: []}" @keydown="
 if (!started) {
     return
 }; 
 input = changeInput($event.key, input);
-if (message === input) {
+if (word === input) {
     input = '';
     score++;
-    message = wordList.random();
+    word = wordList.random();
     if (score >= WORD_COUNT) {
+        word = 'Finished!';
         started = false;
         times.push(Math.round(WORD_COUNT/((Date.now()-start)/60000)*100)/100);
     }
 }">
-    <h1 x-text="message"></h1>
-    <h2 x-text="'Words left: '+(WORD_COUNT-score)"></h2>
-    <h2 x-text="'Input: '+input"></h2>
-    <h2 x-text="times.length === 0 ? '' : ('WPM: '+times[times.length-1])"></h2>
-    <h2 x-text="times.length === 0 ? '' : ('Highscore: '+getLargestInArray(times))"></h2>
-    <button
-        @click="started = !started; if (started) {score = 0; start = Date.now()} else {score=0; message=wordList.random()}"
-        x-text="started ? 'stop' : 'start'"></button>
+    <div
+        class="flex mx-auto max-w-screen-xl min-h-screen flex-col justify-center items-center mx-auto max-w-3xl text-center">
+        <h1 class="text-6xl font-black mb-3" x-text="word"></h1>
+        <h2 class="text-4xl text-cyan-100" x-text="input === '' ? '-' : input"></h2>
+        <h4 x-text="times.length === 0 ? '' : ('WPM: '+times[times.length-1])"></h4>
+        <h4 x-text="times.length === 0 ? '' : ('Highscore: '+getLargestInArray(times))"></h4>
+        <h3 class="text-1xl font-semibold mb-2" x-text="'Words left: '+(WORD_COUNT-score)"></h3>
+        <a class="block w-min rounded border border-blue-700 bg-blue-700 px-12 py-3 text-sm font-medium text-white hover:bg-blue-600"
+            @click="started = !started; if (started) {score = 0; start = Date.now(); word=wordList.random();} else {score=0; word='Stopped.'}"
+            x-text="started ? 'Stop' : 'Start'"></a>
+    </div>
     <script>
         const WORD_COUNT = 30;
 
